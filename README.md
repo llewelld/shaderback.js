@@ -7,18 +7,18 @@ Shaderback is a really simple javascript library that allows animated background
 
 Simply add the following code inside the header of the webpage you want the background on.
 
-'''JavaScript
+```JavaScript
 <script type="text/javascript" src="shaderback.js"></script>
 <script type="text/javascript">
 window.onload = shaderback_loadURL("shader.txt");
 </script>
-'''
+```
 
-Where ''shader.txt'' is the URL of the shader file on your webserver.
+Where `shader.txt` is the URL of the shader file on your webserver.
 
 Alternatively, you can include the shader code in a script element on your page, and tell shaderback to use this instead by passing the ID of the script:
 
-'''JavaScript
+```JavaScript
 <script id="shader-id" type="x-shader/x-fragment">
 	precision highp float;
 
@@ -48,7 +48,7 @@ Alternatively, you can include the shader code in a script element on your page,
 <script type="text/javascript">
 window.onload = shaderback_loaddiv("shader-id");
 </script>
-'''
+```
 
 ## Examples
 
