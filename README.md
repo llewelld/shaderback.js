@@ -3,6 +3,10 @@ Shader-generated backgrounds for the Web.
 
 Shaderback is a really simple javascript library that allows animated backgrounds to be added to HTML5 Web pages. The backgrounds are generated using shaders, and should work on any WebGL compatible device with a suitably powerful GPU.
 
+## Examples
+
+I'm still working on some examples, so there isn't much to see yet. However, there is a live example at http://www.flypig.co.uk/?style=14
+
 ## Usage
 
 Simply add the following code inside the header of the webpage you want the background on.
@@ -50,10 +54,6 @@ window.onload = shaderback_loaddiv("shader-id");
 </script>
 ```
 
-## Examples
-
-I'm still working on some examples, so there isn't much to see yet. However, there is a live example at http://www.flypig.co.uk/?style=14
-
 ## Compatibility
 It's been tested on the following browsers, and seems to work fine on all of them:
 
@@ -65,7 +65,7 @@ It's been tested on the following browsers, and seems to work fine on all of the
 
 However, it's only been tested in pretty limited circumstances (only on a few Web pages), so don't expect too much of it.
 
-## License
+## Licence
 
 Dandelion is released under an MIT License. See the LICENSE file for the full details.
 
