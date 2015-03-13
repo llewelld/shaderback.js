@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=1024" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <title>Shaderback</title>
+    
+    <meta name="description" content="Using shaders for backgrounds for the Web" />
+    <meta name="author" content="David Llewellyn-Jones" />
+
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:regular,semibold,italic,italicsemibold|PT+Sans:400,700,400italic,700italic|PT+Serif:400,700,400italic,700italic" rel="stylesheet" />
+
+    <link href="css/presentation.css" rel="stylesheet" />
+
+    <script type="text/javascript" src="js/shaderback.js"></script>
+    <script type="text/javascript">
+    window.onload = shaderback_loadURL("shaders/gloop.txt");
+    </script>
+</head>
+
+<body class="impress-not-supported">
+
+<div class="fallback-message">
+    <p>Your browser <b>doesn't support the features required</b> for this presentation, so you are presented with a simplified version.</p>
+    <p>For the best experience please use the latest <b>Chrome</b>, <b>Safari</b> or <b>Firefox</b> browser.</p>
+</div>
+
+<div id="background">
+	<img id="logo-top" src="images/paint-down.png" />
+	<img id="logo-bottom" src="images/paint-up.png" />
+	<h1>Shaderback</h1>
+	<div id="impress" data-transition-duration="1000">
+
+			<div id="title" class="step slide" data-x="2500" data-y="0" data-z="0" data-rotate-y="70" >
+				<div id="title-background">
+					<div class="left-line">
+						<h2>Shader-generated backgrounds for the Web</h2>
+						<br />
+						<h3>David Llewellyn-Jones</h3>
+						<h3>12 March 2015</h3>
+						<br />
+						<h3><a href="https://github.com/llewelld/shaderback">https://github.com/llewelld/shaderback</a></h3>
+					</div>
+				</div>
+			</div>
+
+			<div id="general" class="step slide" data-x="2349" data-y="200" data-z="855" data-rotate-y="50" >
+				<h2>What's the Point?</h2>
+				<p />Infinitely varying<sup>*</sup>, procedurally-generated patterns
+				<p />Rendered on the GPU for efficiency
+				<p />Easy to include JavaScript library
+				<img class="technologies" src="images/technologies.png" />
+				<p /><sup>*Well, really not infinitely at all. Quite a lot though.</sup>
+			</div>
+
+			<div id="javascript" class="step slide" data-x="1915" data-y="400" data-z="1607" data-rotate-y="30" >
+				<h2>Javascript Usage</h2>
+				<p />Simply add the following Javscript to the header
+				<p />
+
+<pre class="code"><span style="color:#03c">&lt;<span style="font-weight:700">script</span> <span style="color:#36c;font-style:italic">type</span>=<span style="color:#093">"text/javascript"</span> <span style="color:#36c;font-style:italic">src</span>=<span style="color:#093">"js/shaderback.js"</span>>&lt;/<span style="font-weight:700">script</span>></span>
+&lt;<span style="font-weight:700">script</span> <span style="color:#36c;font-style:italic">type</span>=<span style="color:#093">"text/javascript"</span>>
+<span style="color:#33f;font-weight:700">window</span>.onload <span style="color:#00f">=</span> shaderback_loadURL(<span style="color:#093">"shader.txt"</span>);
+&lt;/<span style="font-weight:700">script</span>>
+</pre>
+				<p />where <span class="code" style="color:#093">shader.txt</span> is the URI to your GLSL fragment shader code.
+			</div>
+
+			<div id="glsl" class="step slide" data-x="1250" data-y="600" data-z="2165" data-rotate-y="10" >
+				<h2>Shader Implementation</h2>
+				<p />Applies fragment shader to <span class="code">body</span> area
+				<p />Texture is scaled 2:1 pixels for efficiency
+				<p />No vertex shader needed; this is done for you
+				<p />These variables are passed to the fragment shader
+				<ul>
+					<li>Screen coordinates as texture coordinates
+					<li>Time as float
+					<li>Height and width or render area
+				</ul>
+				<p />
+			</div>
+
+			<div id="fragment" class="step slide" data-x="434" data-y="800" data-z="2462" data-rotate-y="-10" >
+				<h2>Fragment Shader Example</h2>
+
+<pre class="code"><span style="color:#06f;font-style:italic">// High precision is needed for the time variable</span>
+precision highp <span style="font-weight:700">float</span>;
+<span style="color:#06f;font-style:italic">// The following variables are passed in automatically</span>
+varying vec2 vTextureCoord;
+<span style="color:#33f;font-weight:700">uniform</span> <span style="font-weight:700">float</span> <span style="color:#6782d3">time</span>;
+<span style="color:#33f;font-weight:700">uniform</span> <span style="font-weight:700">float</span> width;
+<span style="color:#33f;font-weight:700">uniform</span> <span style="font-weight:700">float</span> height;
+
+<span style="font-weight:700">void</span> main(<span style="font-weight:700">void</span>) {
+    <span style="color:#06f;font-style:italic">// Perform whatever per-pixel calculations you want</span>
+    vec4 colour <span style="color:#00f">=</span> vec4(<span style="color:#06f">0.6</span>, <span style="color:#06f">0.6</span>, <span style="color:#06f">0.6</span>, <span style="color:#06f">1.0</span>);
+
+    <span style="color:#06f;font-style:italic">// Return the colour to be rendered</span>
+    <span style="color:#06f;font-style:italic">// Alpha blends with page background</span>
+    gl_FragColor <span style="color:#00f">=</span> colour;
+}
+</pre>
+			</div>
+
+			<div id="not-covered" class="step slide" data-x="-434" data-y="1000" data-z="2462" data-rotate-y="-30" >
+				<h2>Development and Testing</h2>
+				<p />Tested on multiple platforms
+				<ul>
+					<LI />Firefox 36, Chromium 41 on Linux
+					<li />Firefox 36, Chrome 41, IE 11 on Windows
+					<li />Chrome 40 on Android 4.4.2
+					<li />Mozilla 1.0 on Jolla Sailfish 1.1.2
+				</ul>
+				<p />There are some things still to be implemented
+				<ul>
+					<li />Passing textures as signals to the shader
+					<li />Backgrounds for arbitrary block elements
+					<li />Choice of resolution
+				</ul>
+			</div>
+
+			<div id="overview" class="step" data-x="500" data-y="900" data-z="4000" data-scale="2">
+				<p />Shaderback: <a href="http://www.flypig.co.uk/shaderback">http://www.flypig.co.uk/shaderback</a>
+				<p style="height: 420px;" />
+				<p />Source: <a href="https://github.com/llewelld/shaderback">https://github.com/llewelld/shaderback</a>
+				<p style="height: 60px;" />
+			</div>
+		
+	</div>
+</div>
+
+<div class="hint">
+	<p>Use a spacebar or arrow keys to navigate</p>
+</div>
+<script>
+if ("ontouchstart" in document.documentElement) { 
+    document.querySelector(".hint").innerHTML = "<p>Tap on the left or right to navigate</p>";
+}
+</script>
+
+<script src="js/impress.js"></script>
+<script>impress().init();</script>
+
+</body>
+</html>
+

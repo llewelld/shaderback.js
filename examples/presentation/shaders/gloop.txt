@@ -1,0 +1,25 @@
+precision highp float;
+
+#define M_PI 3.1415926535897932384626433832795
+varying vec2 vTextureCoord;
+uniform float time;
+uniform float width;
+uniform float height;
+
+void main(void) {
+	vec2 ratio = vec2(width, height);
+	vec2 pos1 = vec2((1.0 + sin(time / 4000.0)) / 2.0, (1.0 + sin(time / 3000.0)) / 2.0) * ratio;
+	vec2 pos2 = vec2((1.0 + sin(time / 3500.0)) / 2.0, (1.0 + sin(time / 2700.0)) / 2.0) * ratio;
+	vec2 pos3 = vec2((1.0 + sin(time / 2650.0)) / 2.0, (1.0 + sin(time / 3200.0)) / 2.0) * ratio;
+	vec2 pos = vTextureCoord * ratio;
+
+	float distance = length (pos - pos1) * length (pos - pos2) * length (pos - pos3);
+	vec4 colour = vec4(0.8, 0.8, 0.8, 1.0);
+	
+	if (distance < 50000000.0) {
+		colour = vec4(1.0, 0.6, 0.6, 1.0);
+	}
+
+	gl_FragColor = colour;
+}
+
