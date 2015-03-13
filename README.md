@@ -5,7 +5,10 @@ Shaderback is a really simple javascript library that allows animated background
 
 ## Examples
 
-I'm still working on some examples, so there isn't much to see yet. However, there is a live example at http://www.flypig.co.uk/?style=14
+So far there aren't many examples, but you can see a couple of simple examples here:
+1. My website with a simple background: [http://www.flypig.co.uk](http://www.flypig.co.uk/?style=14)
+1. impress.js [presentation slides](https://cdn.rawgit.com/llewelld/shaderback/def82749d9310a12f63db6e326f694836a8d52bd/examples/presentation/index.html)
+The code used for both of these is in the examples folder.
 
 ## Usage
 
