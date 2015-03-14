@@ -83,7 +83,7 @@ Dandelion is released under an MIT License. See the LICENSE file for the full de
 
 ## Contact and Links
 
-More information will eventually be added to: http://www.flypig.co.uk/?to=shaderback
+More information will eventually be added to: http://www.flypig.co.uk/shaderback
 
 The source code can be obtained from GitHub: https://github.com/llewelld/shaderback.git
 
