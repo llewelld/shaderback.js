@@ -15,10 +15,10 @@
 /***************************************************************************
  * To use, just add the following uncommented code to your HTML header
  * 
- * 	<script type="text/javascript" src="shaderback.js"></script>
- * 	<script type="text/javascript">
- * 	window.onload = shaderback.loadURL("shader.txt"));
- * 	</script>
+ *   <script type="text/javascript" src="shaderback.js"></script>
+ *   <script type="text/javascript">
+ *   window.onload = shaderback.loadURL("shader.txt"));
+ *   </script>
  * 
  * Where shader.txt is the URL of your fragment shader
  * 
@@ -27,215 +27,216 @@
  * 
 ***************************************************************************/
 
-shaderback = function() {
+var shaderback = (function () {
+  "use strict";
 
-	var canvas;
-	var gl;
-	var shaderProgram;
-	var squareVertexPositionBuffer;
-	var squareVertexTextureCoordBuffer;
-	var pixelScale = 2.0;
-	var running = false;
+  var canvas;
+  var gl;
+  var shaderProgram;
+  var squareVertexPositionBuffer;
+  var squareVertexTextureCoordBuffer;
+  var pixelScale = 2.0;
+  var running = false;
 
-	var vsCode = ""
-		+ "	precision mediump float;"
-		+ ""
-		+ "	attribute vec3 aVertexPosition;"
-		+ "	attribute vec2 aTextureCoord;"
-		+ ""
-		+ "	varying vec2 vTextureCoord;"
-		+ ""
-		+ "	void main(void) {"
-		+ "		vTextureCoord = aTextureCoord;"
-		+ "		gl_Position = vec4(aVertexPosition, 1.0);"
-		+ "	}"
-		+ "";
-	var fsCode;
+  var vsCode = "\n"
+    + "  precision mediump float;\n"
+    + "\n"
+    + "  attribute vec3 aVertexPosition;\n"
+    + "  attribute vec2 aTextureCoord;\n"
+    + "\n"
+    + "  varying vec2 vTextureCoord;\n"
+    + "\n"
+    + "  void main(void) {\n"
+    + "    vTextureCoord = aTextureCoord;\n"
+    + "    gl_Position = vec4(aVertexPosition, 1.0);\n"
+    + "  }\n"
+    + "\n";
+  var fsCode;
 
-	function loadURL(url) {
-		if (url) {
-			var client = new XMLHttpRequest();
-			client.open('GET', url);
-			client.overrideMimeType("text/plain; charset=x-user-defined");
-			client.onloadend = function() {
-				fsCode = client.responseText;
-				start();
-			}
-			client.send();
-		}
-	}
+  function resize() {
+    var width = canvas.clientWidth / pixelScale;
+    var height = canvas.clientHeight / pixelScale;
+    if (canvas.width !== width || canvas.height !== height) {
+      canvas.width = width;
+      canvas.height = height;
+      canvas.style.height = window.innerHeight + "px";
+    }
+  }
 
-	function loaddiv(id) {
-		fsCode = getShaderScript(gl, id);
-		start();
-	}
+  function ready() {
+    var div = document.createElement('div');
+    div.innerHTML = '<canvas class="shaderback" id="shaderback" width="500px" height="500px" style="width: 100%; height: 100%; position: fixed; top: 0px; left: 0px; z-index: -1;"></canvas>';
+    var elements = div.childNodes[0];
+    document.getElementsByTagName('body')[0].appendChild(elements);
+    canvas = document.getElementById("shaderback");
+    window.onresize = resize;
+  }
 
-	function loadtext(text) {
-		fsCode = text;
-		start();
-	}
+  function initGL(canvas) {
+    try {
+      gl = canvas.getContext("experimental-webgl");
+      gl.viewportWidth = canvas.width;
+      gl.viewportHeight = canvas.height;
+    } catch (ignore) {
+      // Fail silently
+    }
+  }
 
-	function ready() {
-		var div = document.createElement('div');
-		div.innerHTML = '<canvas class="shaderback" id="shaderback" width="500px" height="500px" style="width: 100%; height: 100%; position: fixed; top: 0px; left: 0px; z-index: -1;"></canvas>';
-		var elements = div.childNodes[0];
-		document.getElementsByTagName('body')[0].appendChild(elements);
-		canvas = document.getElementById("shaderback");
-		window.onresize = resize;
-	};
+  // Type should be either gl.FRAGMENT_SHADER or gl.VERTEX_SHADER
+  function compileShader(str, type) {
+    var shader = gl.createShader(type);
 
-	function resize () {
-		var width = canvas.clientWidth / pixelScale;
-		var height = canvas.clientHeight / pixelScale;
-		if (canvas.width != width || canvas.height != height) {
-			canvas.width = width;
-			canvas.height = height;
-			canvas.style.height = window.innerHeight + "px";
-		}
-	}
+    gl.shaderSource(shader, str);
+    gl.compileShader(shader);
 
-	function start () {
-		if (!running) {
-			running = true;
-			ready();
-			resize();
-			initGL(canvas);
-			initShaders();
-			initBuffers();
-			drawScene();
-		}
-		else {
-			initShaders();
-		}
-	}
+    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+      alert(gl.getShaderInfoLog(shader));
+      return null;
+    }
 
-	window.requestAnimFrame = (function() {
-	return window.requestAnimationFrame ||
-		window.webkitRequestAnimationFrame ||
-		window.mozRequestAnimationFrame ||
-		window.oRequestAnimationFrame ||
-		window.msRequestAnimationFrame ||
-		function(/* function FrameRequestCallback */ callback, /* DOMElement Element */ element) {
-			window.setTimeout(callback, 1000/60);
-		};
-	})();
+    return shader;
+  }
 
-	function initGL(canvas) {
-		try {
-			gl = canvas.getContext("experimental-webgl");
-			gl.viewportWidth = canvas.width;
-			gl.viewportHeight = canvas.height;
-		} catch (e) {
-			// Fail silently
-		}
-	}
+  function initShaders() {
+    var fragmentShader = compileShader(fsCode, gl.FRAGMENT_SHADER);
+    var vertexShader = compileShader(vsCode, gl.VERTEX_SHADER);
 
-	function getShaderScript(gl, id) {
-		var shaderScript = document.getElementById(id);
-		if (!shaderScript) {
-			return null;
-		}
+    shaderProgram = gl.createProgram();
+    gl.attachShader(shaderProgram, vertexShader);
+    gl.attachShader(shaderProgram, fragmentShader);
+    gl.linkProgram(shaderProgram);
 
-		var str = "";
-		var k = shaderScript.firstChild;
-		while (k) {
-			if (k.nodeType == 3) {
-				str += k.textContent;
-			}
-			k = k.nextSibling;
-		}
-		return str;
-	}
+    if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
+      alert("Could not initialise shaders");
+    }
 
-	// Type should be either gl.FRAGMENT_SHADER or gl.VERTEX_SHADER
-	function compileShader(str, type) {
-		var shader = gl.createShader(type);
+    gl.useProgram(shaderProgram);
 
-		gl.shaderSource(shader, str);
-		gl.compileShader(shader);
+    shaderProgram.vertexPositionAttribute = gl.getAttribLocation(shaderProgram, "aVertexPosition");
+    gl.enableVertexAttribArray(shaderProgram.vertexPositionAttribute);
 
-		if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-			alert(gl.getShaderInfoLog(shader));
-			return null;
-		}
+    shaderProgram.textureCoordAttribute = gl.getAttribLocation(shaderProgram, "aTextureCoord");
+    gl.enableVertexAttribArray(shaderProgram.textureCoordAttribute);
 
-		return shader;
-	}
+    shaderProgram.timeUniform = gl.getUniformLocation(shaderProgram, "time");
+    shaderProgram.widthUniform = gl.getUniformLocation(shaderProgram, "width");
+    shaderProgram.heightUniform = gl.getUniformLocation(shaderProgram, "height");
+  }
 
-	function initShaders() {
-		var fragmentShader = compileShader(fsCode, gl.FRAGMENT_SHADER);
-		var vertexShader = compileShader(vsCode, gl.VERTEX_SHADER);
+  function initBuffers() {
+    squareVertexPositionBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, squareVertexPositionBuffer);
+    var vertices = [
+      1.0,  1.0,  0.0,
+      -1.0,  1.0,  0.0,
+      1.0, -1.0,  0.0,
+      -1.0, -1.0,  0.0
+    ];
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+    squareVertexPositionBuffer.itemSize = 3;
+    squareVertexPositionBuffer.numItems = 4;
 
-		shaderProgram = gl.createProgram();
-		gl.attachShader(shaderProgram, vertexShader);
-		gl.attachShader(shaderProgram, fragmentShader);
-		gl.linkProgram(shaderProgram);
+    squareVertexTextureCoordBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, squareVertexTextureCoordBuffer);
+    var textureCoords = [
+      1.0, 1.0,
+      0.0, 1.0,
+      1.0, 0.0,
+      0.0, 0.0
+    ];
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoords), gl.STATIC_DRAW);
+    squareVertexTextureCoordBuffer.itemSize = 2;
+    squareVertexTextureCoordBuffer.numItems = 4;
+  }
 
-		if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
-			alert("Could not initialise shaders");
-		}
+  window.requestAnimFrame = (function () {
+    return window.requestAnimationFrame ||
+      window.webkitRequestAnimationFrame ||
+      window.mozRequestAnimationFrame ||
+      window.oRequestAnimationFrame ||
+      window.msRequestAnimationFrame ||
+      function (callback, element) {
+        window.setTimeout(callback, 1000 / 60);
+      };
+  })();
 
-		gl.useProgram(shaderProgram);
+  function drawScene() {
+    var timeNow = new Date().valueOf();
+    requestAnimFrame(drawScene);
 
-		shaderProgram.vertexPositionAttribute = gl.getAttribLocation(shaderProgram, "aVertexPosition");
-		gl.enableVertexAttribArray(shaderProgram.vertexPositionAttribute);
+    gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
+    gl.uniform1f(shaderProgram.timeUniform, timeNow % 36000000);
+    gl.uniform1f(shaderProgram.widthUniform, canvas.clientWidth);
+    gl.uniform1f(shaderProgram.heightUniform, canvas.clientHeight);
 
-		shaderProgram.textureCoordAttribute = gl.getAttribLocation(shaderProgram, "aTextureCoord");
-		gl.enableVertexAttribArray(shaderProgram.textureCoordAttribute);
+    gl.bindBuffer(gl.ARRAY_BUFFER, squareVertexPositionBuffer);
+    gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, squareVertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
 
-		shaderProgram.timeUniform = gl.getUniformLocation(shaderProgram, "time");
-		shaderProgram.widthUniform = gl.getUniformLocation(shaderProgram, "width");
-		shaderProgram.heightUniform = gl.getUniformLocation(shaderProgram, "height");
-	}
+    gl.bindBuffer(gl.ARRAY_BUFFER, squareVertexTextureCoordBuffer);
+    gl.vertexAttribPointer(shaderProgram.textureCoordAttribute, squareVertexTextureCoordBuffer.itemSize, gl.FLOAT, false, 0, 0);
 
-	function initBuffers() {
-		squareVertexPositionBuffer = gl.createBuffer();
-		gl.bindBuffer(gl.ARRAY_BUFFER, squareVertexPositionBuffer);
-		vertices = [
-			1.0,  1.0,  0.0,
-			-1.0,  1.0,  0.0,
-			1.0, -1.0,  0.0,
-			-1.0, -1.0,  0.0
-		];
-		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
-		squareVertexPositionBuffer.itemSize = 3;
-		squareVertexPositionBuffer.numItems = 4;
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, squareVertexPositionBuffer.numItems);
+  }
 
-		squareVertexTextureCoordBuffer = gl.createBuffer();
-		gl.bindBuffer(gl.ARRAY_BUFFER, squareVertexTextureCoordBuffer);
-		var textureCoords = [
-			1.0, 1.0,
-			0.0, 1.0,
-			1.0, 0.0,
-			0.0, 0.0
-		];
-		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoords), gl.STATIC_DRAW);
-		squareVertexTextureCoordBuffer.itemSize = 2;
-		squareVertexTextureCoordBuffer.numItems = 4;
-	}
+  function start() {
+    if (!running) {
+      running = true;
+      ready();
+      resize();
+      initGL(canvas);
+      initShaders();
+      initBuffers();
+      drawScene();
+    }
+    else {
+      initShaders();
+    }
+  }
 
-	function drawScene() {
-		var timeNow = new Date().valueOf();
-		requestAnimFrame(drawScene);
+  function getShaderScript(id) {
+    var shaderScript = document.getElementById(id);
+    if (!shaderScript) {
+      return null;
+    }
 
-		gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
-		gl.uniform1f(shaderProgram.timeUniform, timeNow % 36000000);
-		gl.uniform1f(shaderProgram.widthUniform, canvas.clientWidth);
-		gl.uniform1f(shaderProgram.heightUniform, canvas.clientHeight);
+    var str = "";
+    var k = shaderScript.firstChild;
+    while (k) {
+      if (k.nodeType === 3) {
+        str += k.textContent;
+      }
+      k = k.nextSibling;
+    }
+    return str;
+  }
 
-		gl.bindBuffer(gl.ARRAY_BUFFER, squareVertexPositionBuffer);
-		gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, squareVertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
+  function loadURL(url) {
+    if (url) {
+      var client = new XMLHttpRequest();
+      client.open('GET', url);
+      client.overrideMimeType("text/plain; charset=x-user-defined");
+      client.onloadend = function () {
+        fsCode = client.responseText;
+        start();
+      };
+      client.send();
+    }
+  }
 
-		gl.bindBuffer(gl.ARRAY_BUFFER, squareVertexTextureCoordBuffer);
-		gl.vertexAttribPointer(shaderProgram.textureCoordAttribute, squareVertexTextureCoordBuffer.itemSize, gl.FLOAT, false, 0, 0);
+  function loaddiv(id) {
+    fsCode = getShaderScript(id);
+    start();
+  }
 
-		gl.drawArrays(gl.TRIANGLE_STRIP, 0, squareVertexPositionBuffer.numItems);
-	}
+  function loadtext(text) {
+    fsCode = text;
+    start();
+  }
 
-	return{
-		loadURL:loadURL,
-		loaddiv:loaddiv,
-		loadtext:loadtext
-	}
-}();
+  return {
+    loadURL : loadURL,
+    loaddiv : loaddiv,
+    loadtext : loadtext
+  };
+}());
 
