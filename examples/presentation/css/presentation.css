@@ -255,7 +255,7 @@ a:focus {
 	height: 756px;
 	padding: 60px 60px;
 
-	background-color: rgba(255, 255, 255, .3);
+	background-color: rgba(255, 255, 255, 0.3);
 	border: 1px solid rgba(0, 0, 0, .3);
 	border-radius: 10px;
 	box-shadow: 0 2px 16px rgba(0, 0, 0, .5);
@@ -269,12 +269,12 @@ a:focus {
 	letter-spacing: -1px;
 
 	background: rgba(215, 215, 215, 0.6);
-	background: -webkit-gradient(radial, 50% 50%, 0, 50% 50%, 500, from(rgba(240, 240, 240, 0.6)), to(rgba(190, 190, 190, 0.6)));
-	background: -webkit-radial-gradient(rgba(240, 240, 240, 0.6), rgba(190, 190, 190, 0.6));
-	background:    -moz-radial-gradient(rgba(240, 240, 240, 0.6), rgba(190, 190, 190, 0.6));
-	background:     -ms-radial-gradient(rgba(240, 240, 240, 0.6), rgba(190, 190, 190, 0.6));
-	background:      -o-radial-gradient(rgba(240, 240, 240, 0.6), rgba(190, 190, 190, 0.6));
-	background:         radial-gradient(rgba(240, 240, 240, 0.6), rgba(150, 200, 150, 0.6));
+	background: -webkit-gradient(radial, 50% 50%, 0, 50% 50%, 500, from(rgba(240, 240, 240, 0.2)), to(rgba(150, 150, 200, 0.2)));
+	background: -webkit-radial-gradient(rgba(240, 240, 240, 0.2), rgba(150, 150, 200, 0.2));
+	background:    -moz-radial-gradient(rgba(240, 240, 240, 0.2), rgba(150, 150, 200, 0.2));
+	background:     -ms-radial-gradient(rgba(240, 240, 240, 0.2), rgba(150, 150, 200, 0.2));
+	background:      -o-radial-gradient(rgba(240, 240, 240, 0.2), rgba(150, 150, 200, 0.2));
+	background:         radial-gradient(rgba(240, 240, 240, 0.2), rgba(150, 150, 200, 0.2));
 }
 
 .slide q {

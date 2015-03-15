@@ -34,7 +34,7 @@ vec3 BlinnPhongLighting(vec3 pos, vec3 viewDir, vec3 normal) {
 }
 
 void main(void) {
-	const float stickiness = 0.0050;
+	const float stickiness = 0.0015;
 	const float r1 = 0.25;
 	const float r2 = 0.25;
 	const float r3 = 0.25;
@@ -65,10 +65,9 @@ void main(void) {
 	highp float up = pow(dist, 0.45);
 	vec3 normal = normalize(vec3(pos.x - centre.x, pos.y - centre.y, up));
 
-	vec4 colour = vec4(0.8 * (1.0 - vTextureCoord.y), 0.8 * vTextureCoord.y, 0.8, 1.0);
-	if (dist > 0.0) {
-		colour.xyz = BlinnPhongLighting (position, vec3(0.0, 0.0, 1.0), normal);
-	}
+	vec4 colour;
+	colour.xyz = BlinnPhongLighting (position, vec3(0.0, 0.0, 1.0), normal);
+	colour.a = 1.0;
 
 	gl_FragColor = colour;
 }
