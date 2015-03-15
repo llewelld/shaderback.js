@@ -5,12 +5,13 @@ Shaderback is a really simple javascript library that allows animated background
 
 ## Examples
 
-So far there aren't many examples, but you can see a couple of simple examples here:
+You can see some examples of Shaderback usage here:
 
 1. My website with a simple background: [http://www.flypig.co.uk](http://www.flypig.co.uk/?style=14)
-1. impress.js [presentation slides](https://cdn.rawgit.com/llewelld/shaderback/a040eb8f55bc2486f3229e1d93fdd6150c162890/examples/presentation/index.html)
+1. impress.js [presentation slides](https://cdn.rawgit.com/llewelld/shaderback/74c8fe76a01f40a5dd6b4c1dea1cc6ae7866eaf2/examples/presentation/index.html#/title)
+1. Shaderback [testing page](https://cdn.rawgit.com/llewelld/shaderback/74c8fe76a01f40a5dd6b4c1dea1cc6ae7866eaf2/examples/test.html).
 
-The code used for both of these is in the examples folder.
+The code for these is in the examples folder.
 
 ## Usage
 
@@ -19,7 +20,7 @@ Simply add the following code inside the header of the webpage you want the back
 ```JavaScript
 <script type="text/javascript" src="shaderback.js"></script>
 <script type="text/javascript">
-window.onload = shaderback_loadURL("shader.txt");
+window.onload = shaderback.loadURL("shader.txt");
 </script>
 ```
 Where `shader.txt` is the URL of the fragment shader file on your webserver.
@@ -28,10 +29,10 @@ Alternatively, you can include the shader code in a script element on your page,
 
 ```JavaScript
 <script id="shader-id" type="x-shader/x-fragment">
-	precision highp float;
+	precision mediump float;
 
 	varying vec2 vTextureCoord;
-	uniform float time;
+	uniform highp float time;
 	uniform float width;
 	uniform float height;
 
@@ -49,7 +50,7 @@ Alternatively, you can include the shader code in a script element on your page,
 
 <script type="text/javascript" src="shaderback.js"></script>
 <script type="text/javascript">
-window.onload = shaderback_loaddiv("shader-id");
+window.onload = shaderback.loaddiv("shader-id");
 </script>
 ```
 In this second case `shader-id` is the element ID of the script tag containing the fragment shader code.
@@ -59,7 +60,7 @@ Finally, if you have your shader code stored as a string, you can use:
 ```JavaScript
 <script type="text/javascript" src="shaderback.js"></script>
 <script type="text/javascript">
-window.onload = shaderback_loadtext(text);
+window.onload = shaderback.loadtext(text);
 </script>
 ```
 Where `text` is a string containing the fragment shader code.
@@ -79,7 +80,7 @@ However, it's only been tested in pretty limited circumstances (only on a few We
 
 ## Licence
 
-Dandelion is released under an MIT License. See the LICENSE file for the full details.
+Shaderback is released under an MIT License. See the LICENSE file for the full details.
 
 ## Contact and Links
 
