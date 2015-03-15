@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=1024" />
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+	<title>Shaderback</title>
+
+	<meta name="description" content="Using shaders for backgrounds for the Web" />
+	<meta name="author" content="David Llewellyn-Jones" />
+
+	<script>
+	// See http://stackoverflow.com/a/5448595 for script
+	function parse(val) {
+		var result = "Not found", tmp = [];
+		//.replace ( "?", "" ) 
+		// this is better, there might be a question mark inside
+		location.search.substr(1).split("&").forEach(function (item) {
+			tmp = item.split("=");
+			if (tmp[0] === val) result = decodeURIComponent(tmp[1]);
+		});
+		return result;
+	}
+	var shaderUri = parse("shader");
+	</script>
+
+	<script type="text/javascript" src="../shaderback.js"></script>
+	<script type="text/javascript">
+	window.onload = shaderback_loadURL(parse("shader"));
+	</script>
+</head>
+
+<body>
+
+<p />Current shader file <span id="details">Details</span>.
+<form name="ShaderForm" action="" method="get">
+Shader filename: <input id="filename" name="shader" type="text" value="" />
+<input type="submit" value="Submit" />
+</form>
+
+<script>
+	document.getElementById("details").innerHTML = shaderUri;
+	document.getElementById("filename").setAttribute("value", shaderUri);
+</script>
+
+
+</body>
+</html>
+
