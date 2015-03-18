@@ -1,5 +1,5 @@
 /***************************************************************************
- * Shaderback
+ * shaderback.js
  * Shader-generated backgrounds for the web
  * http://www.flypig.co.uk/shaderback
  * 

@@ -1,15 +1,15 @@
-# shaderback
+# shaderback.js
 Shader-generated backgrounds for the Web.
 
-Shaderback is a really simple javascript library that allows animated backgrounds to be added to HTML5 Web pages. The backgrounds are generated using shaders, and should work on any WebGL compatible device with a suitably powerful GPU.
+Shaderback.js is a really simple javascript library that allows animated backgrounds to be added to HTML5 Web pages. The backgrounds are generated using shaders, and should work on any WebGL compatible device with a suitably powerful GPU.
 
 ## Examples
 
-You can see some examples of Shaderback usage here:
+You can see some examples of Shaderback.js usage here:
 
 1. My website with a simple background: [http://www.flypig.co.uk](http://www.flypig.co.uk/?style=14)
 1. impress.js [presentation slides](https://cdn.rawgit.com/llewelld/shaderback/507aaaf8651f16ae7e451b73e9fb5017c7a23ddf/examples/presentation/index.html)
-1. Shaderback [testing page](https://cdn.rawgit.com/llewelld/shaderback/507aaaf8651f16ae7e451b73e9fb5017c7a23ddf/examples/test.html).
+1. Shaderback.js [testing page](https://cdn.rawgit.com/llewelld/shaderback/507aaaf8651f16ae7e451b73e9fb5017c7a23ddf/examples/test.html).
 
 The code for these is in the examples folder.
 
@@ -25,7 +25,7 @@ window.onload = shaderback.loadURL("shader.txt");
 ```
 Where `shader.txt` is the URL of the fragment shader file on your webserver.
 
-Alternatively, you can include the shader code in a script element on your page, and tell shaderback to use this instead by passing the ID of the script:
+Alternatively, you can include the shader code in a script element on your page, and tell shaderback.js to use this instead by passing the ID of the script:
 
 ```JavaScript
 <script id="shader-id" type="x-shader/x-fragment">
@@ -80,13 +80,13 @@ However, it's only been tested in pretty limited circumstances (only on a few We
 
 ## Licence
 
-Shaderback is released under an MIT License. See the LICENSE file for the full details.
+Shaderback.js is released under an MIT License. See the LICENSE file for the full details.
 
 ## Contact and Links
 
 More information will eventually be added to: http://www.flypig.co.uk/shaderback
 
-The source code can be obtained from GitHub: https://github.com/llewelld/shaderback.git
+The source code can be obtained from GitHub: https://github.com/llewelld/shaderback.js
 
 I can be contacted via one of the following.
 
