@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=1024" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <title>Shaderback</title>
+    <title>Shaderback.js</title>
     
     <meta name="description" content="Using shaders for backgrounds for the Web" />
     <meta name="author" content="David Llewellyn-Jones" />
@@ -29,7 +29,7 @@
 <div id="background">
 	<img id="logo-top" src="images/paint-down.png" />
 	<img id="logo-bottom" src="images/paint-up.png" />
-	<h1>Shaderback</h1>
+	<h1>Shaderback.js</h1>
 	<div id="impress" data-transition-duration="1000">
 
 			<div id="title" class="step slide" data-x="2500" data-y="0" data-z="0" data-rotate-y="70" >
@@ -40,7 +40,7 @@
 						<h3>David Llewellyn-Jones</h3>
 						<h3>12 March 2015</h3>
 						<br />
-						<h3><a href="https://github.com/llewelld/shaderback">https://github.com/llewelld/shaderback</a></h3>
+						<h3><a href="https://github.com/llewelld/shaderback.js">https://github.com/llewelld/shaderback.js</a></h3>
 					</div>
 				</div>
 			</div>
@@ -64,7 +64,7 @@
 <span style="color:#33f;font-weight:700">window</span>.onload <span style="color:#00f">=</span> shaderback.loadURL(<span style="color:#093">"shader.txt"</span>);
 &lt;/<span style="font-weight:700">script</span>>
 </pre>
-				<p />where <span class="code" style="color:#093">shader.txt</span> is the URI to your GLSL fragment shader code.
+				<p />where <span class="code" style="color:#093">shader.txt</span> is the URI of your GLSL fragment shader code.
 			</div>
 
 			<div id="glsl" class="step slide" data-x="1250" data-y="600" data-z="2165" data-rotate-y="10" >
@@ -72,11 +72,11 @@
 				<p />Applies fragment shader to <span class="code">body</span> area
 				<p />Texture is scaled 2:1 pixels for efficiency
 				<p />No vertex shader needed; this is done for you
-				<p />These variables are passed to the fragment shader
+				<p />These variables are passed to the fragment shader:
 				<ul>
 					<li>Screen coordinates as texture coordinates
 					<li>Time as float
-					<li>Height and width or render area
+					<li>Height and width of render area
 				</ul>
 				<p />
 			</div>
@@ -121,9 +121,9 @@ varying vec2 vTextureCoord;
 			</div>
 
 			<div id="overview" class="step" data-x="500" data-y="900" data-z="4000" data-scale="2">
-				<p />Shaderback: <a href="http://www.flypig.co.uk/shaderback">http://www.flypig.co.uk/shaderback</a>
+				<p />Shaderback.js: <a href="http://www.flypig.co.uk/shaderback">http://www.flypig.co.uk/shaderback</a>
 				<p style="height: 420px;" />
-				<p />Source: <a href="https://github.com/llewelld/shaderback">https://github.com/llewelld/shaderback</a>
+				<p />Source: <a href="https://github.com/llewelld/shaderback">https://github.com/llewelld/shaderback.js</a>
 				<p style="height: 60px;" />
 			</div>
 		
