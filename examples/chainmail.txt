@@ -1,0 +1,41 @@
+precision highp float;
+
+#define M_PI 3.1415926535897932384626433832795
+varying vec2 vTextureCoord;
+uniform float time;
+uniform float width;
+uniform float height;
+
+// (((((x - xc1)**2) + ((y - yc1)**2) - (r1**2)) * (((x - xc2)**2) + ((y - yc2)**2) - (r2**2)))) < (s / 1000)
+
+void main(void) {
+	vec2 ratio = vec2(width, height) / width;
+	vec2 pos = vTextureCoord * ratio;
+	float scale = (2.0 + sin(time / 5000.0)) / 5.0;
+	pos += vec2(sin(time / 2500.0), sin(time / 2650.0)) * 0.1;
+
+	float radius1 = distance(vec2(mod(pos.x + 0.1 * sin(time / 2000.0), 0.2 * scale), mod(pos.y + 0.1 * cos(time / 2000.0), 0.2 * scale)), vec2(0.1 * scale, 0.1 * scale));
+	float radius2 = distance(vec2(mod(0.1 + pos.x + 0.1 * sin(time / 3100.0), 0.2 * scale), mod(0.1 + pos.y + 0.1 * cos(time / 3100.0), 0.2 * scale)), vec2(0.1 * scale, 0.1 * scale));
+	float radius3 = distance(vec2(mod(0.1 + pos.x + 0.1 * sin(-time / 2800.0), 0.2 * scale), mod(0.1 + pos.y + 0.1 * cos(-time / 2800.0), 0.2 * scale)), vec2(0.1 * scale, 0.1 * scale));
+	float red = 0.0;
+	float green = 0.0;
+	float blue = 0.0;
+	if ((radius1 < 0.09 * scale) && (radius1 > 0.06 * scale)) {
+		green = 1.0;
+	}
+	if ((radius2 < 0.09 * scale) && (radius2 > 0.06 * scale)) {
+		red = 1.0;
+	}
+	if ((radius3 < 0.09 * scale) && (radius3 > 0.06 * scale)) {
+		blue = 1.0;
+	}
+	
+
+
+
+	vec4 colour = vec4(red, green, blue, 1.0);
+	
+
+	gl_FragColor = colour;
+}
+
