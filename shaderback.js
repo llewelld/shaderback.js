@@ -165,7 +165,7 @@ var shaderback = (function () {
     requestAnimFrame(drawScene);
 
     gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
-    gl.uniform1f(shaderProgram.timeUniform, timeNow % 36000000);
+    gl.uniform1f(shaderProgram.timeUniform, timeNow % 18000000);
     gl.uniform1f(shaderProgram.widthUniform, canvas.clientWidth);
     gl.uniform1f(shaderProgram.heightUniform, canvas.clientHeight);
 
