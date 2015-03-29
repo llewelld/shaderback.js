@@ -69,25 +69,30 @@ Where `text` is a string containing the fragment shader code.
 
 When creating a fragment shader for use with shaderback.js, you need to include three variables to accept state values, as detailed below. The output colour of the current fragment is returned in `gl_FragColor` as usual.
 
-These values are compatible with Shadertoy.com, although at present we don't support all of the Shadertoy.com inputs (e.g. no channels, mouse position, etc.).
+These values are compatible with [Shadertoy](https://www.shadertoy.com/), although at present we don't support all of the [Shadertoy](https://www.shadertoy.com/) inputs (e.g. no channels, mouse position, etc.).
 
 ### Inputs
 
 `uniform highp float iGlobalTime`
+
 Current time in seconds since midnight January 1, 1970 (GMT), modulo 18000. The use of world time allows synchronisation across separate instances. The modulo is to avoid float overflow/innacuracy errors and essentially means the time will loop back to zero every 5 hours.
 
 `uniform vec3 iResolution`
+
 Viewport resolution, with x, y being width and height respectively, and z being the pixel aspect ratio (currently always 1). Note that the height and width will be half the pixel resolution of the current visible body area of the page (since the resultion is set to half this for performance reasons).
 
 `varying vec2 fragCoord`
+
 Coordinate of the current fragment to be rendered. The x and y values will be in the range [0, iResolution.x) and [0, iResolution.y) respectively. If you want to convert them to texture uv coordinates in the range [0, 1), simply dividte by iResolution.xy.
 
 ### Outputs
 
 `gl_FragColor`
+
 Use this to output the colour of the current fragment. The alpha channel is used to blend with the background of thee page. All colour values are in the range [0, 1], including alpha.
 
 ## Compatibility
+
 It's been tested on the following browsers, and seems to work fine on all of them:
 
 1. Firefox 36.01 under Linux and Windows
