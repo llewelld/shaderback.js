@@ -91,6 +91,17 @@ Coordinate of the current fragment to be rendered. The x and y values will be in
 
 Use this to output the colour of the current fragment. The alpha channel is used to blend with the background of thee page. All colour values are in the range [0, 1], including alpha.
 
+## Error Handling
+
+By default shaderback.js will skip any errors (whether from WebGL, Javascript or the shader code) and silently deactivate itself. This is important for production sites, since not all browsers or machines will support GPU rendering. End users shouldn't be presented with errors, and sites should cleanly degrade if the capabilities aren't supported.
+
+However, during development it can be helpful to receive error notifications. To this end, you can turn on error messages with the `setDebug(active)` method. Ensure you call it before attempting to load your shader, as follows:
+
+```JavaScript
+shaderback.setDebug(true);
+window.onload = shaderback.loadURL("shader.txt");
+```
+
 ## Compatibility
 
 It's been tested on the following browsers, and seems to work fine on all of them:
