@@ -4,12 +4,9 @@
 
 precision highp float;
 
-varying vec2 vTextureCoord;
-uniform highp float time;
-uniform float width;
-uniform float height;
-vec3 iResolution;
-float iGlobalTime;
+varying vec2 fragCoord;
+uniform vec3 iResolution;
+uniform float iGlobalTime;
 vec2 iMouse;
 
 /////////////////////////////////////////////////////////////////////////
@@ -361,16 +358,9 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
 
 
 void main () {
-	vec4 fragColor;
-	vec2 fragCoord = vTextureCoord * vec2(width, height);
-	iResolution = vec3 (width, height, width / height);
-	iGlobalTime = time / 1000.0;
 	iMouse = vec2(0.0, 0.0);
-	
-	mainImage(fragColor, fragCoord );
 
-	gl_FragColor = fragColor;
-	gl_FragColor.a = 1.0;
+	mainImage(gl_FragColor, fragCoord);
 }
 
 

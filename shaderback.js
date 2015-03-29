@@ -4,8 +4,8 @@
  * http://www.flypig.co.uk/shaderback
  * 
  * David Llewellyn-Jones <david@flypig.co.uk>
- * Version 0.02
- * 15th March 2015
+ * Version 0.03
+ * 29th March 2015
  * 
  * Copyright (c) 2015 David Llewellyn-Jones
  * Released under the MIT license
@@ -44,10 +44,11 @@ var shaderback = (function () {
     + "  attribute vec3 aVertexPosition;\n"
     + "  attribute vec2 aTextureCoord;\n"
     + "\n"
-    + "  varying vec2 vTextureCoord;\n"
+    + "  uniform vec3 iResolution;\n"
+    + "  varying vec2 fragCoord;\n"
     + "\n"
     + "  void main(void) {\n"
-    + "    vTextureCoord = aTextureCoord;\n"
+    + "    fragCoord = aTextureCoord * iResolution.xy;\n"
     + "    gl_Position = vec4(aVertexPosition, 1.0);\n"
     + "  }\n"
     + "\n";
@@ -118,9 +119,8 @@ var shaderback = (function () {
     shaderProgram.textureCoordAttribute = gl.getAttribLocation(shaderProgram, "aTextureCoord");
     gl.enableVertexAttribArray(shaderProgram.textureCoordAttribute);
 
-    shaderProgram.timeUniform = gl.getUniformLocation(shaderProgram, "time");
-    shaderProgram.widthUniform = gl.getUniformLocation(shaderProgram, "width");
-    shaderProgram.heightUniform = gl.getUniformLocation(shaderProgram, "height");
+    shaderProgram.iGlobalTime = gl.getUniformLocation(shaderProgram, "iGlobalTime");
+    shaderProgram.iResolution = gl.getUniformLocation(shaderProgram, "iResolution");
   }
 
   function initBuffers() {
@@ -161,13 +161,13 @@ var shaderback = (function () {
   })();
 
   function drawScene() {
-    var timeNow = new Date().valueOf();
+    var timeNow = new Date().valueOf() / 1000.0;
     requestAnimFrame(drawScene);
 
     gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
-    gl.uniform1f(shaderProgram.timeUniform, timeNow % 18000000);
-    gl.uniform1f(shaderProgram.widthUniform, canvas.clientWidth);
-    gl.uniform1f(shaderProgram.heightUniform, canvas.clientHeight);
+    gl.uniform1f(shaderProgram.iGlobalTime, timeNow % 18000);
+
+    gl.uniform3f(shaderProgram.iResolution, canvas.clientWidth, canvas.clientHeight, 1.0);
 
     gl.bindBuffer(gl.ARRAY_BUFFER, squareVertexPositionBuffer);
     gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, squareVertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
