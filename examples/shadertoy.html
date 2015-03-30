@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=1024" />
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+	<title>Shaderback.js Shadertoy.com API Tests</title>
+
+	<meta name="description" content="Using Shadertoy.com shaders for backgrounds for the Web" />
+	<meta name="author" content="David Llewellyn-Jones" />
+
+	<link href='http://fonts.googleapis.com/css?family=Lato:400,700' rel='stylesheet' type='text/css'>
+
+	<script>
+	// See http://stackoverflow.com/a/5448595 for this parsing script
+	function parse(val) {
+		var result = "", tmp = [];
+		//.replace ( "?", "" ) 
+		// this is better, there might be a question mark inside
+		location.search.substr(1).split("&").forEach(function (item) {
+			tmp = item.split("=");
+			if (tmp[0] === val) result = decodeURIComponent(tmp[1]);
+		});
+		return result;
+	}
+	var shaderID = parse("shader");
+	</script>
+
+	<script type="text/javascript" src="../shaderback.js"></script>
+	<script type="text/javascript">
+	if (shaderID) {
+	  shaderback.setDebug(true);
+		window.onload = shaderback.loadshadertoy(shaderID);
+	}
+	</script>
+
+	<script type="text/javascript">
+		window.onload = function() {
+			var links = "";
+			var columns = 6;
+			
+      var client = new XMLHttpRequest();
+      client.open('GET', "https://www.shadertoy.com/api/v1/shaders?key=rdHKwN");
+      client.onloadend = function () {
+      	var obj = JSON.parse (client.responseText);
+      	if ((obj.Shaders) && (obj.Results)) {
+      		for (var count = 0; count < obj.Shaders; count++) {
+      			links += '<a href="?shader=' + obj.Results[count] + '">' + obj.Results[count] + '</a> \n';
+      		}
+					document.getElementById("id-list").innerHTML = links;
+        }
+      };
+      client.send();
+
+
+		};
+	</script>
+
+
+</head>
+
+<body style="font-family: 'Lato', sans-serif; font-size: 120%;">
+<div style="background: rgba(255, 255, 255, 0.8); margin: 20px; padding: 20px; width: auto; border-radius: 16px; display: inline-block;">
+<p /><h2>Shaderback.js Shadertoy.com API test page</h2>
+<p />Enter the ID of the Shadertoy.com shader and click submit.
+
+<p />Current shader file: <b><span id="details">Details</span></b>.
+<form name="ShaderForm" action="" method="get">
+Shader URL: <input id="filename" name="shader" type="text" value="" />
+<input type="submit" value="Submit" />
+</form>
+<p />Only shaders without channel inputs will currently work.
+<p />Click on one of the following links for some examples.
+<div id="id-list" style="font-family: monospace; height: 300px; width: 580px; overflow-y: scroll; scroll: auto;">
+Loading IDs from Shadertoy.com
+</div>
+
+
+<script>
+	if (shaderID) {
+		document.getElementById("details").innerHTML = shaderID;
+	}
+	else {
+		document.getElementById("details").innerHTML = "No shader file loaded";
+	}
+	document.getElementById("filename").setAttribute("value", shaderID);
+</script>
+<p />For more info see the Shaderback.js <a href="http://www.flypig.co.uk/shaderback">website</a> or <a href="https://github.com/llewelld/shaderback.js">GitHub page</a>.
+</div>
+</body>
+</html>
+
+
+
