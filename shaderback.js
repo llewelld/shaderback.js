@@ -55,6 +55,22 @@ var shaderback = (function () {
     + "\n";
   var fsCode;
 
+  var vsShadertoyHead = "\n"
+    + "  precision highp float;\n"
+    + "\n"
+    + "  varying vec2 fragCoord;\n"
+    + "  uniform vec3 iResolution;\n"
+    + "  uniform float iGlobalTime;\n"
+    + "  const vec2 iMouse = vec2(0.0, 0.0);\n"
+    + "\n"
+    + "  void mainImage (out vec4 fragColor, in vec2 fragCoord);\n"
+    + "\n"
+    + "  void main () {\n"
+    + "  	 mainImage(gl_FragColor, fragCoord);\n"
+    + "  	 gl_FragColor.a = 1.0;\n"
+    + "  }\n"
+    + "\n";
+
   function resize() {
     var width = canvas.clientWidth / pixelScale;
     var height = canvas.clientHeight / pixelScale;
@@ -273,10 +289,29 @@ var shaderback = (function () {
     start();
   }
 
+  function loadshadertoy(shaderID) {
+    if (shaderID) {
+      var client = new XMLHttpRequest();
+      client.open('GET', "https://www.shadertoy.com/api/v1/shaders/" + shaderID + "?key=rdHKwN");
+      client.onloadend = function () {
+      	var obj = JSON.parse (client.responseText);
+      	if (obj.Shader) {
+          fsCode = vsShadertoyHead + obj.Shader.renderpass[0].code;
+          start();
+        }
+        else if (debug) {
+          alert ("Shadertoy error: " + (obj.Error ? obj.Error : "Unknown response"));
+        }
+      };
+      client.send();
+    }
+  }
+
   return {
     loadURL : loadURL,
     loaddiv : loaddiv,
     loadtext : loadtext,
+    loadshadertoy : loadshadertoy,
     setDebug : setDebug
   };
 }());
