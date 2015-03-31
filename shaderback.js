@@ -225,7 +225,9 @@ var shaderback = (function () {
   }
 
   function initEvents() {
-    window.onresize = resize;
+    window.addEventListener('resize', function(event) {
+      resize();
+    });
     
     return true;
   }
