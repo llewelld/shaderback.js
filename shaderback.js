@@ -40,7 +40,7 @@ var shaderback = (function () {
   var debug = false;
 
   var vsCode = "\n"
-    + "  precision mediump float;\n"
+    + "  precision highp float;\n"
     + "\n"
     + "  attribute vec3 aVertexPosition;\n"
     + "  attribute vec2 aTextureCoord;\n"
