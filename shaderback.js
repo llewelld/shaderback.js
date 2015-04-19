@@ -39,6 +39,7 @@ var shaderback = (function () {
   var running = false;
   var debug = false;
 
+  // Vertex shader code
   var vsCode = "\n"
     + "  precision highp float;\n"
     + "\n"
@@ -55,6 +56,7 @@ var shaderback = (function () {
     + "\n";
   var fsCode;
 
+  // Fragment shader head for use with ShaderToy.com shaders
   var vsShadertoyHead = "\n"
     + "  precision highp float;\n"
     + "\n"
@@ -71,6 +73,7 @@ var shaderback = (function () {
     + "  }\n"
     + "\n";
 
+  // Update dimensions on a resize event
   function resize() {
     var width = canvas.clientWidth / pixelScale;
     var height = canvas.clientHeight / pixelScale;
@@ -81,6 +84,7 @@ var shaderback = (function () {
     }
   }
 
+  // Add the canvas covering the body element background
   function ready() {
     var success = true;
     var div = document.createElement('div');
@@ -99,6 +103,7 @@ var shaderback = (function () {
     return success;
   }
 
+  // Initialise the OpenGL/WebGL canvas
   function initGL(canvas) {
     var success = true;
     try {
@@ -116,6 +121,7 @@ var shaderback = (function () {
     return success;
   }
 
+  // Compile the shader with the give text
   // Type should be either gl.FRAGMENT_SHADER or gl.VERTEX_SHADER
   function compileShader(str, type) {
     var shader = gl.createShader(type);
@@ -133,6 +139,7 @@ var shaderback = (function () {
     return shader;
   }
 
+  // Compile and link the shader and setup CPU accessible GPU variables
   function initShaders() {
     var success = true;
     var fragmentShader = compileShader(fsCode, gl.FRAGMENT_SHADER);
@@ -167,6 +174,7 @@ var shaderback = (function () {
     return success;
   }
 
+  // Initialise the OpenGL vertex and index buffers for the fullscreen rectangle
   function initBuffers() {
     var success = true;
     squareVertexPositionBuffer = gl.createBuffer();
@@ -196,6 +204,7 @@ var shaderback = (function () {
     return success;
   }
 
+  // Set a callback for window update events
   window.requestAnimFrame = (function () {
     return window.requestAnimationFrame ||
       window.webkitRequestAnimationFrame ||
@@ -207,6 +216,7 @@ var shaderback = (function () {
       };
   })();
 
+  // Render the scene, to be called every frame update
   function drawScene() {
     var timeNow = new Date().valueOf() / 1000.0;
     requestAnimFrame(drawScene);
@@ -225,6 +235,7 @@ var shaderback = (function () {
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, squareVertexPositionBuffer.numItems);
   }
 
+  // Initialise the event listerners for window resizing
   function initEvents() {
     window.addEventListener('resize', function(event) {
       resize();
@@ -233,6 +244,7 @@ var shaderback = (function () {
     return true;
   }
 
+  // Set up the shader background
   function start() {
     if (!running) {
       running = ready();
@@ -248,6 +260,7 @@ var shaderback = (function () {
     }
   }
 
+  // Get the shader text from the script tag with the given ID
   function getShaderScript(id) {
     var shaderScript = document.getElementById(id);
     if (!shaderScript) {
@@ -265,10 +278,14 @@ var shaderback = (function () {
     return str;
   }
   
+  // Set whether or not to generate alerts on errors
+  // active - true to generate alerts, false otherwise
   function setDebug(active) {
     debug = active;
   }
 
+  // Load a shader from a as the page background
+  // url - URI of shader code
   function loadURL(url) {
     if (url) {
       var client = new XMLHttpRequest();
@@ -282,16 +299,22 @@ var shaderback = (function () {
     }
   }
 
+  // Load the shader stored in a script tag as the page background
+  // id - id of the script tag containing the shader code
   function loaddiv(id) {
     fsCode = getShaderScript(id);
     start();
   }
 
+  // Load the shader with code text as the page background
+  // text - shader code
   function loadtext(text) {
     fsCode = text;
     start();
   }
 
+  // Load the ShaderToy.com shader as the page background
+  // shaderID - ShaderToy.com ID
   function loadshadertoy(shaderID) {
     if (shaderID) {
       var client = new XMLHttpRequest();
@@ -310,6 +333,7 @@ var shaderback = (function () {
     }
   }
 
+  // Externally exposed functions
   return {
     loadURL : loadURL,
     loaddiv : loaddiv,
