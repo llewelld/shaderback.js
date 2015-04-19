@@ -103,6 +103,7 @@ var shaderback = (function () {
     var success = true;
     try {
       gl = canvas.getContext("experimental-webgl");
+      gl.getExtension("OES_standard_derivatives");
       gl.viewportWidth = canvas.width;
       gl.viewportHeight = canvas.height;
     } catch (ignore) {
