@@ -1,10 +1,9 @@
-precision mediump float;
+precision highp float;
 
 #define M_PI 3.1415926535897932384626433832795
-varying vec2 vTextureCoord;
-uniform highp float time;
-uniform float width;
-uniform float height;
+varying vec2 fragCoord;
+uniform highp float iGlobalTime;
+uniform vec3 iResolution;
 
 // (((((x - xc1)**2) + ((y - yc1)**2) - (r1**2)) * (((x - xc2)**2) + ((y - yc2)**2) - (r2**2)))) < (s / 1000)
 
@@ -38,11 +37,11 @@ void main(void) {
 	const float r1 = 0.25;
 	const float r2 = 0.25;
 	const float r3 = 0.25;
-	vec2 ratio = vec2(width, height) / min(width, height);
-	vec2 pos1 = vec2((1.0 + sin(time / 9000.0)) / 2.0, (1.0 + sin(time / 7100.0)) / 2.0) * ratio;
-	vec2 pos2 = vec2((1.0 + sin(time / 8900.0)) / 2.0, (1.0 + sin(time / 10400.0)) / 2.0) * ratio;
-	vec2 pos3 = vec2((1.0 + sin(time / 9650.0)) / 2.0, (1.0 + sin(time / 91500.0)) / 2.0) * ratio;
-	vec2 pos = vTextureCoord * ratio;
+	vec2 ratio = vec2(iResolution.x, iResolution.y) / min(iResolution.x, iResolution.y);
+	vec2 pos1 = vec2((1.0 + sin(iGlobalTime / 9.000)) / 2.0, (1.0 + sin(iGlobalTime / 7.1000)) / 2.0) * ratio;
+	vec2 pos2 = vec2((1.0 + sin(iGlobalTime / 8.900)) / 2.0, (1.0 + sin(iGlobalTime / 10.400)) / 2.0) * ratio;
+	vec2 pos3 = vec2((1.0 + sin(iGlobalTime / 9.650)) / 2.0, (1.0 + sin(iGlobalTime / 91.500)) / 2.0) * ratio;
+	vec2 pos = fragCoord * ratio / iResolution.xy;
 
 	float d1 = pow((pos.x - pos1.x), 2.0) + pow((pos.y - pos1.y), 2.0) - pow(r1, 2.0);
 	float d2 = pow((pos.x - pos2.x), 2.0) + pow((pos.y - pos2.y), 2.0) - pow(r2, 2.0);

@@ -1,11 +1,11 @@
 /***************************************************************************
- * Shaderback
+ * shaderback.js
  * Shader-generated backgrounds for the web
  * http://www.flypig.co.uk/shaderback
  * 
  * David Llewellyn-Jones <david@flypig.co.uk>
- * Version 0.02
- * 15th March 2015
+ * Version 0.03
+ * 29th March 2015
  * 
  * Copyright (c) 2015 David Llewellyn-Jones
  * Released under the MIT license
@@ -37,21 +37,39 @@ var shaderback = (function () {
   var squareVertexTextureCoordBuffer;
   var pixelScale = 2.0;
   var running = false;
+  var debug = false;
 
   var vsCode = "\n"
-    + "  precision mediump float;\n"
+    + "  precision highp float;\n"
     + "\n"
     + "  attribute vec3 aVertexPosition;\n"
     + "  attribute vec2 aTextureCoord;\n"
     + "\n"
-    + "  varying vec2 vTextureCoord;\n"
+    + "  uniform vec3 iResolution;\n"
+    + "  varying vec2 fragCoord;\n"
     + "\n"
     + "  void main(void) {\n"
-    + "    vTextureCoord = aTextureCoord;\n"
+    + "    fragCoord = aTextureCoord * iResolution.xy;\n"
     + "    gl_Position = vec4(aVertexPosition, 1.0);\n"
     + "  }\n"
     + "\n";
   var fsCode;
+
+  var vsShadertoyHead = "\n"
+    + "  precision highp float;\n"
+    + "\n"
+    + "  varying vec2 fragCoord;\n"
+    + "  uniform vec3 iResolution;\n"
+    + "  uniform float iGlobalTime;\n"
+    + "  const vec2 iMouse = vec2(0.0, 0.0);\n"
+    + "\n"
+    + "  void mainImage (out vec4 fragColor, in vec2 fragCoord);\n"
+    + "\n"
+    + "  void main () {\n"
+    + "  	 mainImage(gl_FragColor, fragCoord);\n"
+    + "  	 gl_FragColor.a = 1.0;\n"
+    + "  }\n"
+    + "\n";
 
   function resize() {
     var width = canvas.clientWidth / pixelScale;
@@ -64,22 +82,37 @@ var shaderback = (function () {
   }
 
   function ready() {
+    var success = true;
     var div = document.createElement('div');
     div.innerHTML = '<canvas class="shaderback" id="shaderback" width="500px" height="500px" style="width: 100%; height: 100%; position: fixed; top: 0px; left: 0px; z-index: -1;"></canvas>';
     var elements = div.childNodes[0];
     document.getElementsByTagName('body')[0].appendChild(elements);
     canvas = document.getElementById("shaderback");
-    window.onresize = resize;
+    
+    if (!canvas) {
+      success = false;
+      if (debug) {
+        alert("Canvas creation failed");
+      }
+    }
+    
+    return success;
   }
 
   function initGL(canvas) {
+    var success = true;
     try {
       gl = canvas.getContext("experimental-webgl");
       gl.viewportWidth = canvas.width;
       gl.viewportHeight = canvas.height;
     } catch (ignore) {
-      // Fail silently
+      if (debug) {
+        alert("No WebGL context");
+      }
+      success = false;
     }
+
+    return success;
   }
 
   // Type should be either gl.FRAGMENT_SHADER or gl.VERTEX_SHADER
@@ -90,40 +123,51 @@ var shaderback = (function () {
     gl.compileShader(shader);
 
     if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-      alert(gl.getShaderInfoLog(shader));
-      return null;
+      if (debug) {
+        alert(gl.getShaderInfoLog(shader));
+      }
+      shader = null;
     }
 
     return shader;
   }
 
   function initShaders() {
+    var success = true;
     var fragmentShader = compileShader(fsCode, gl.FRAGMENT_SHADER);
     var vertexShader = compileShader(vsCode, gl.VERTEX_SHADER);
 
-    shaderProgram = gl.createProgram();
-    gl.attachShader(shaderProgram, vertexShader);
-    gl.attachShader(shaderProgram, fragmentShader);
-    gl.linkProgram(shaderProgram);
-
-    if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
-      alert("Could not initialise shaders");
+    if (fragmentShader) {
+      shaderProgram = gl.createProgram();
+      gl.attachShader(shaderProgram, vertexShader);
+      gl.attachShader(shaderProgram, fragmentShader);
+      gl.linkProgram(shaderProgram);
     }
 
-    gl.useProgram(shaderProgram);
+    if (fragmentShader && gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
+      gl.useProgram(shaderProgram);
 
-    shaderProgram.vertexPositionAttribute = gl.getAttribLocation(shaderProgram, "aVertexPosition");
-    gl.enableVertexAttribArray(shaderProgram.vertexPositionAttribute);
+      shaderProgram.vertexPositionAttribute = gl.getAttribLocation(shaderProgram, "aVertexPosition");
+      gl.enableVertexAttribArray(shaderProgram.vertexPositionAttribute);
 
-    shaderProgram.textureCoordAttribute = gl.getAttribLocation(shaderProgram, "aTextureCoord");
-    gl.enableVertexAttribArray(shaderProgram.textureCoordAttribute);
+      shaderProgram.textureCoordAttribute = gl.getAttribLocation(shaderProgram, "aTextureCoord");
+      gl.enableVertexAttribArray(shaderProgram.textureCoordAttribute);
 
-    shaderProgram.timeUniform = gl.getUniformLocation(shaderProgram, "time");
-    shaderProgram.widthUniform = gl.getUniformLocation(shaderProgram, "width");
-    shaderProgram.heightUniform = gl.getUniformLocation(shaderProgram, "height");
+      shaderProgram.iGlobalTime = gl.getUniformLocation(shaderProgram, "iGlobalTime");
+      shaderProgram.iResolution = gl.getUniformLocation(shaderProgram, "iResolution");
+    }
+    else {
+      if (debug) {
+        alert("Could not initialise shaders");
+      }
+      success = false;
+    }
+    
+    return success;
   }
 
   function initBuffers() {
+    var success = true;
     squareVertexPositionBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, squareVertexPositionBuffer);
     var vertices = [
@@ -147,6 +191,8 @@ var shaderback = (function () {
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoords), gl.STATIC_DRAW);
     squareVertexTextureCoordBuffer.itemSize = 2;
     squareVertexTextureCoordBuffer.numItems = 4;
+    
+    return success;
   }
 
   window.requestAnimFrame = (function () {
@@ -161,13 +207,13 @@ var shaderback = (function () {
   })();
 
   function drawScene() {
-    var timeNow = new Date().valueOf();
+    var timeNow = new Date().valueOf() / 1000.0;
     requestAnimFrame(drawScene);
 
     gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
-    gl.uniform1f(shaderProgram.timeUniform, timeNow % 36000000);
-    gl.uniform1f(shaderProgram.widthUniform, canvas.clientWidth);
-    gl.uniform1f(shaderProgram.heightUniform, canvas.clientHeight);
+    gl.uniform1f(shaderProgram.iGlobalTime, timeNow % 18000);
+
+    gl.uniform3f(shaderProgram.iResolution, canvas.clientWidth, canvas.clientHeight, 1.0);
 
     gl.bindBuffer(gl.ARRAY_BUFFER, squareVertexPositionBuffer);
     gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, squareVertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
@@ -178,18 +224,26 @@ var shaderback = (function () {
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, squareVertexPositionBuffer.numItems);
   }
 
+  function initEvents() {
+    window.addEventListener('resize', function(event) {
+      resize();
+    });
+    
+    return true;
+  }
+
   function start() {
     if (!running) {
-      running = true;
-      ready();
+      running = ready();
       resize();
-      initGL(canvas);
-      initShaders();
-      initBuffers();
-      drawScene();
+      if (running) running = initGL(canvas);
+      if (running) running = initShaders();
+      if (running) running = initBuffers();
+      if (running) running = initEvents();
+      if (running) drawScene();
     }
     else {
-      initShaders();
+      running = initShaders();
     }
   }
 
@@ -208,6 +262,10 @@ var shaderback = (function () {
       k = k.nextSibling;
     }
     return str;
+  }
+  
+  function setDebug(active) {
+    debug = active;
   }
 
   function loadURL(url) {
@@ -233,10 +291,30 @@ var shaderback = (function () {
     start();
   }
 
+  function loadshadertoy(shaderID) {
+    if (shaderID) {
+      var client = new XMLHttpRequest();
+      client.open('GET', "https://www.shadertoy.com/api/v1/shaders/" + shaderID + "?key=rdHKwN");
+      client.onloadend = function () {
+      	var obj = JSON.parse (client.responseText);
+      	if (obj.Shader) {
+          fsCode = vsShadertoyHead + obj.Shader.renderpass[0].code;
+          start();
+        }
+        else if (debug) {
+          alert ("Shadertoy error: " + (obj.Error ? obj.Error : "Unknown response"));
+        }
+      };
+      client.send();
+    }
+  }
+
   return {
     loadURL : loadURL,
     loaddiv : loaddiv,
-    loadtext : loadtext
+    loadtext : loadtext,
+    loadshadertoy : loadshadertoy,
+    setDebug : setDebug
   };
 }());
 
