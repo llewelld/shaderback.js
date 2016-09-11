@@ -29,18 +29,17 @@ Alternatively, you can include the shader code in a script element on your page,
 
 ```JavaScript
 <script id="shader-id" type="x-shader/x-fragment">
-	precision mediump float;
+	precision highp float;
 
-	varying vec2 vTextureCoord;
-	uniform highp float time;
-	uniform float width;
-	uniform float height;
+	varying vec2 fragCoord;
+	uniform float iGlobalTime;
+	uniform vec3 iResolution;
 
 	void main(void) {
 		// The actual shader code goes here
 		// See the example folder for some examples 
-		float line = (width * (0.5 - vTextureCoord.s)) * sin(0.8 + (time / 30000.0));
-		line -= (height * (0.5 - vTextureCoord.t)) * cos(0.8 + (time / 30000.0));
+		float line = (iResolution.x * (0.5 - fragCoord.x)) * sin(0.8 + (iGlobalTime / 30000.0));
+		line -= (iResolution.y * (0.5 - fragCoord.y)) * cos(0.8 + (iGlobalTime / 30000.0));
 		float cycle = (1.0 + sin(line)) / 2.0;
 
 		vec4 colour = (cycle * vec4(0.6, 0.6, 0.6, 1.0)) + ((1.0 - cycle) * vec4(0.9, 0.9, 0.9, 1.0));
@@ -121,7 +120,7 @@ Shaderback.js is released under an MIT License. See the LICENSE file for the ful
 
 ## Contact and Links
 
-More information will eventually be added to: http://www.flypig.co.uk/shaderback
+More information will eventually be added to: http://www.flypig.co.uk/?to=shaderback
 
 The source code can be obtained from GitHub: https://github.com/llewelld/shaderback.js
 
