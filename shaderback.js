@@ -163,6 +163,8 @@ var shaderback = (function () {
 
       shaderProgram.iGlobalTime = gl.getUniformLocation(shaderProgram, "iGlobalTime");
       shaderProgram.iResolution = gl.getUniformLocation(shaderProgram, "iResolution");
+
+      shaderProgram.iScroll = gl.getUniformLocation(shaderProgram, "iScroll");
     }
     else {
       if (debug) {
@@ -225,6 +227,8 @@ var shaderback = (function () {
     gl.uniform1f(shaderProgram.iGlobalTime, timeNow % 18000);
 
     gl.uniform3f(shaderProgram.iResolution, canvas.clientWidth, canvas.clientHeight, 1.0);
+
+    gl.uniform2f(shaderProgram.iScroll, window.scrollX / document.body.scrollWidth, window.scrollY / document.body.scrollHeight);
 
     gl.bindBuffer(gl.ARRAY_BUFFER, squareVertexPositionBuffer);
     gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, squareVertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
