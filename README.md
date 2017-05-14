@@ -84,6 +84,10 @@ Viewport resolution, with x, y being width and height respectively, and z being 
 
 Coordinate of the current fragment to be rendered. The x and y values will be in the range [0, iResolution.x) and [0, iResolution.y) respectively. If you want to convert them to texture uv coordinates in the range [0, 1), simply dividte by iResolution.xy.
 
+`uniform vec2 iScroll`
+
+Viewport scroll, with x, y being the horizontal and vertical scroll respectively. These are normalised values between 0 and 1, which can be scaled up by iResolution to give pixel values. This variable can be useful if, for example, you want the shader to scroll with the window, since the default behaviour is for it to be fixed.
+
 ### Outputs
 
 `gl_FragColor`
