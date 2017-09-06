@@ -63,6 +63,7 @@ var shaderback = (function () {
     + "  varying vec2 fragCoord;\n"
     + "  uniform vec3 iResolution;\n"
     + "  uniform float iGlobalTime;\n"
+    + "  uniform float iTime;\n"
     + "  const vec2 iMouse = vec2(0.0, 0.0);\n"
     + "\n"
     + "  void mainImage (out vec4 fragColor, in vec2 fragCoord);\n"
@@ -162,6 +163,7 @@ var shaderback = (function () {
       gl.enableVertexAttribArray(shaderProgram.textureCoordAttribute);
 
       shaderProgram.iGlobalTime = gl.getUniformLocation(shaderProgram, "iGlobalTime");
+      shaderProgram.iTime = gl.getUniformLocation(shaderProgram, "iTime");
       shaderProgram.iResolution = gl.getUniformLocation(shaderProgram, "iResolution");
     }
     else {
@@ -223,6 +225,7 @@ var shaderback = (function () {
 
     gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
     gl.uniform1f(shaderProgram.iGlobalTime, timeNow % 18000);
+    gl.uniform1f(shaderProgram.iTime, timeNow % 18000);
 
     gl.uniform3f(shaderProgram.iResolution, canvas.clientWidth, canvas.clientHeight, 1.0);
 
