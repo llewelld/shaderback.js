@@ -126,26 +126,22 @@ var shaderback = (function () {
   function initGL(canvas,webgl2) {
     var success = true;
     try {
-      if (webgl2)
-      {
+      if (webgl2) {
         // Trying to get WebGL2 context, if not supported, revert to experimental WebGL
         gl = canvas.getContext("webgl2");
-        if(gl)
-        {
+        if(gl) {
           gl.getExtension("OES_texture_float_linear");
           gl.getExtension("OES_texture_half_float_linear");
           gl.getExtension("EXT_texture_filter_anistoropic");
           gl.getExtension("EXT_color_buffer_float");
           gl.getExtension("WEBGL_debug_shaders");
           isWebGL2 = true;
-          if(debug)
-          {
+          if(debug) {
             console.log("Using WebGL2");
           }
         }
       }
-      if (!isWebGL2)
-      {
+      if (!isWebGL2) {
         gl = canvas.getContext("webgl");
         gl.getExtension("OES_standard_derivatives");
       }

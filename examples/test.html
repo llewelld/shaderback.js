@@ -30,13 +30,11 @@
 	<script type="text/javascript" src="../shaderback.js"></script>
 	<script type="text/javascript">
 	if (shaderUri) {
-	  shaderback.setDebug(true);
-	    if(webgl2)
-		{
+		shaderback.setDebug(true);
+		if(webgl2) {
 			window.onload = shaderback.loadURL(shaderUri,true);
 		}
-		else
-		{
+		else {
 			window.onload = shaderback.loadURL(shaderUri);
 		}
 	}
