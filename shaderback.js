@@ -32,6 +32,7 @@ var shaderback = (function () {
 
   var canvas;
   var gl;
+  var isWebGL2 = false;
   var shaderProgram;
   var squareVertexPositionBuffer;
   var squareVertexTextureCoordBuffer;
@@ -48,6 +49,23 @@ var shaderback = (function () {
     + "\n"
     + "  uniform vec3 iResolution;\n"
     + "  varying vec2 fragCoord;\n"
+    + "\n"
+    + "  void main(void) {\n"
+    + "    fragCoord = aTextureCoord * iResolution.xy;\n"
+    + "    gl_Position = vec4(aVertexPosition, 1.0);\n"
+    + "  }\n"
+    + "\n";
+  var fsCode;
+
+    // Vertex shader code, WebGL2
+  var vsCode2 = "#version 300 es\n"
+    + "  precision highp float;\n"
+    + "\n"
+    + "  in vec3 aVertexPosition;\n"
+    + "  in vec2 aTextureCoord;\n"
+    + "\n"
+    + "  uniform vec3 iResolution;\n"
+    + "  out vec2 fragCoord;\n"
     + "\n"
     + "  void main(void) {\n"
     + "    fragCoord = aTextureCoord * iResolution.xy;\n"
@@ -105,11 +123,28 @@ var shaderback = (function () {
   }
 
   // Initialise the OpenGL/WebGL canvas
-  function initGL(canvas) {
+  function initGL(canvas,webgl2) {
     var success = true;
     try {
-      gl = canvas.getContext("experimental-webgl");
-      gl.getExtension("OES_standard_derivatives");
+      if (webgl2) {
+        // Trying to get WebGL2 context, if not supported, revert to experimental WebGL
+        gl = canvas.getContext("webgl2");
+        if(gl) {
+          gl.getExtension("OES_texture_float_linear");
+          gl.getExtension("OES_texture_half_float_linear");
+          gl.getExtension("EXT_texture_filter_anistoropic");
+          gl.getExtension("EXT_color_buffer_float");
+          gl.getExtension("WEBGL_debug_shaders");
+          isWebGL2 = true;
+          if(debug) {
+            console.log("Using WebGL2");
+          }
+        }
+      }
+      if (!isWebGL2) {
+        gl = canvas.getContext("webgl");
+        gl.getExtension("OES_standard_derivatives");
+      }
       gl.viewportWidth = canvas.width;
       gl.viewportHeight = canvas.height;
     } catch (ignore) {
@@ -144,7 +179,12 @@ var shaderback = (function () {
   function initShaders() {
     var success = true;
     var fragmentShader = compileShader(fsCode, gl.FRAGMENT_SHADER);
-    var vertexShader = compileShader(vsCode, gl.VERTEX_SHADER);
+    if (isWebGL2) {
+      var vertexShader = compileShader(vsCode2, gl.VERTEX_SHADER);
+    }
+    else {
+      var vertexShader = compileShader(vsCode, gl.VERTEX_SHADER);
+    }
 
     if (fragmentShader) {
       shaderProgram = gl.createProgram();
@@ -248,11 +288,12 @@ var shaderback = (function () {
   }
 
   // Set up the shader background
-  function start() {
+  function start(webgl2) {
+    console.log(webgl2);
     if (!running) {
       running = ready();
       resize();
-      if (running) running = initGL(canvas);
+      if (running) running = initGL(canvas,webgl2);
       if (running) running = initShaders();
       if (running) running = initBuffers();
       if (running) running = initEvents();
@@ -289,14 +330,14 @@ var shaderback = (function () {
 
   // Load a shader from a as the page background
   // url - URI of shader code
-  function loadURL(url) {
+  function loadURL(url,webgl2 = false) {
     if (url) {
       var client = new XMLHttpRequest();
       client.open('GET', url);
       client.overrideMimeType("text/plain; charset=x-user-defined");
       client.onloadend = function () {
         fsCode = client.responseText;
-        start();
+        start(webgl2);
       };
       client.send();
     }

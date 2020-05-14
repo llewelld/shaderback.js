@@ -24,13 +24,19 @@
 		return result;
 	}
 	var shaderUri = parse("shader");
+	var webgl2 = parse("webgl2");
 	</script>
 
 	<script type="text/javascript" src="../shaderback.js"></script>
 	<script type="text/javascript">
 	if (shaderUri) {
-	  shaderback.setDebug(true);
-		window.onload = shaderback.loadURL(shaderUri);
+		shaderback.setDebug(true);
+		if(webgl2) {
+			window.onload = shaderback.loadURL(shaderUri,true);
+		}
+		else {
+			window.onload = shaderback.loadURL(shaderUri);
+		}
 	}
 	</script>
 </head>
@@ -53,6 +59,7 @@ Shader URL: <input id="filename" name="shader" type="text" value="" />
 	<li><a href="test.html?shader=gloopflat.txt">gloopflat.txt</a>
 	<li><a href="test.html?shader=chainmail.txt">chainmail.txt</a>
 	<li><a href="test.html?shader=distortion.txt">distortion.txt</a>
+	<li><a href="test.html?shader=triangles.txt&webgl2=true">triangles.txt (WebGL2)</a>
 
 	<li><a href="test.html?shader=shadertoy-iq.txt">shadertoy-iq.txt</a> (see <a href="https://www.shadertoy.com/view/Xds3zN">Shadertoy</a> for original).
 	<li><a href="test.html?shader=shadertoy-iq2.txt">shadertoy-iq2.txt</a> (see <a href="https://www.shadertoy.com/view/4dl3zn">Shadertoy</a> for original).
@@ -61,6 +68,7 @@ Shader URL: <input id="filename" name="shader" type="text" value="" />
 </ul>
 
 <script>
+	shaderback.setDebug(true);
 	if (shaderUri) {
 		document.getElementById("details").innerHTML = shaderUri;
 	}
